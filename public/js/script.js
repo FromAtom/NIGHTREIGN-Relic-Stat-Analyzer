@@ -461,16 +461,19 @@ function updateChart() {
 				},
 				plugins: {
 					legend: {
-						display: false
+						display: true,
+						position: 'bottom',
+						align: 'start',
+						labels: {
+							color: tickColor,
+							font: { size: 12 },
+							boxWidth: 12,
+							padding: 15
+						},
+						onClick: null
 					},
 					tooltip: {
-						mode: 'index',
-						intersect: false,
-						backgroundColor: 'rgba(0, 0, 0, 0.9)',
-						titleFont: { size: 14 },
-						bodyFont: { size: 13 },
-						boxWidth: 14,
-						boxHeight: 14
+						enabled: false
 					}
 				},
 				interaction: {
