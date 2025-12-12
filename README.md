@@ -1,2 +1,2 @@
-# NIGHTREIGN-Relic-Stat-Analyzer
-NIGHTREIGN Relic Stat Analyzer for Build Planning
+# エルデンリング ナイトレイン｜ステータス変更遺物効果比較ツール
+非公式です。

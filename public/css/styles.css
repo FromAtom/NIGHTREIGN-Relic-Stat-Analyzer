@@ -1,0 +1,63 @@
+/*
+ * Custom CSS for layout consistency and animation.
+ * Tailwind CSS is loaded via CDN in index.html.
+ */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* transition is managed by inline styles in index.html body */
+}
+
+.chart-container {
+    position: relative;
+    height: 60vh;
+    min-height: 400px;
+    width: 100%;
+}
+
+/* Custom Scrollbar Styles */
+.custom-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+/* Light Mode Scrollbar */
+.custom-scroll::-webkit-scrollbar-track {
+    background: #f3f4f6; /* gray-100 */
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+    background: #d1d5db; /* gray-300 */
+    border-radius: 4px;
+}
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af; /* gray-400 */
+}
+
+/* Dark Mode Scrollbar (Applied via dark: prefix or specific class for custom scroll) */
+html.dark .custom-scroll::-webkit-scrollbar-track {
+    background: #1f2937; /* gray-800 */
+}
+html.dark .custom-scroll::-webkit-scrollbar-thumb {
+    background: #4b5563; /* gray-600 */
+}
+html.dark .custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: #6b7280; /* gray-500 */
+}
+
+/* Accordion Animation */
+.accordion-content {
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    max-height: 1000px; /* Sufficient height */
+    opacity: 1;
+    overflow: hidden;
+}
+.accordion-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+.arrow-icon {
+    transition: transform 0.3s ease;
+}
+.arrow-icon.collapsed {
+    transform: rotate(-90deg);
+}
