@@ -434,7 +434,7 @@ function updateTable() {
 
 	let th = document.createElement('th');
 	th.scope = "col";
-	th.className = `px-4 py-3 sticky left-0 z-20 min-w-[80px] border-b border-r ${fixedBorderColor} ${headerBg} ${fixedCellShadow}`;
+	th.className = `px-4 py-3 sticky left-0 z-20 min-w-[80px] border-b border-r-2 ${fixedBorderColor} ${headerBg} ${fixedCellShadow}`;
 	th.innerText = "項目";
 	theadRow.appendChild(th);
 
@@ -448,7 +448,7 @@ function updateTable() {
 	activeDatasets.forEach((ds, i) => {
 		const th = document.createElement('th');
 		th.scope = "col";
-		th.className = `px-4 py-3 min-w-[120px] border-b ${fixedBorderColor}`;
+		th.className = `px-2 py-2 min-w-[110px] text-center border-b border-r ${fixedBorderColor}`;
 		th.style.color = ds.borderColor;
 		th.innerText = ds.label;
 		theadRow.appendChild(th);
@@ -465,14 +465,14 @@ function updateTable() {
 
 		let th = document.createElement('th');
 		th.scope = "row";
-		th.className = `px-4 py-3 font-medium text-gray-800 dark:text-white sticky left-0 z-10 border-b border-r ${fixedBorderColor} ${fixedCellShadow} ${baseBg} group-hover:bg-gray-100 dark:group-hover:bg-gray-700 transition-colors`;
+		th.className = `px-4 py-2 font-medium text-gray-800 dark:text-white sticky left-0 z-10 border-b border-r-2 ${fixedBorderColor} ${fixedCellShadow} ${baseBg} group-hover:bg-gray-100 dark:group-hover:bg-gray-700 transition-colors`;
 		th.innerText = label;
 		tr.appendChild(th);
 
 		activeDatasets.forEach(ds => {
 			const val = ds.data[rowIndex];
 			const td = document.createElement('td');
-			td.className = `px-4 py-3 text-center border-b ${cellBorder}`;
+			td.className = `px-2 py-2 text-right border-b border-r ${cellBorder}`;
 			td.innerText = val;
 			tr.appendChild(td);
 		});
