@@ -263,240 +263,371 @@ function deselectAll() {
 	updateChartAndTable();
 }
 
-// --- Rendering ---
+// --- Download Chart Function ---
+function downloadChartImage() {
+	if (!chartInstance) return;
 
-function initControls() {
-	const panel = document.getElementById('controlPanel');
-	panel.innerHTML = '';
+	// 1. Create a temporary canvas with exact same dimensions
+	const originalCanvas = chartInstance.canvas;
+	const originalWidth = originalCanvas.width;
+	const originalHeight = originalCanvas.height;
 
-	Object.keys(characters).forEach((charName, index) => {
-		const charObj = characters[charName];
-		const accordionId = `acc-${index}`;
+	// Define padding size
+	const padding = 40;
 
-		if (accordionState[charName] === undefined) {
-			accordionState[charName] = true;
+	const tempCanvas = document.createElement('canvas');
+	const width = originalWidth + (padding * 2);
+	const height = originalHeight + (padding * 2);
+
+	tempCanvas.width = width;
+	tempCanvas.height = height;
+	const ctx = tempCanvas.getContext('2d');
+
+	// 2. Fill Background based on current theme
+	const isDark = document.documentElement.classList.contains('dark');
+	const bgColor = isDark ? '#111827' : '#ffffff';
+	const textColor = isDark ? '#9ca3af' : '#6b7280';
+
+	ctx.fillStyle = bgColor;
+	ctx.fillRect(0, 0, width, height);
+
+	// 3. Draw Chart centered with padding
+	ctx.drawImage(originalCanvas, padding, padding);
+
+	// 4. Add Text (Watermark) - Top Center position
+	const text = 'ER:NR ステータス変更遺物効果比較ツール（https://fromatom.me/NIGHTREIGN-Relic-Stat-Analyzer/）';
+	const fontSize = Math.min(Math.max(12, Math.round(width * 0.015)), 24);
+	ctx.font = `${fontSize}px sans-serif`;
+	ctx.fillStyle = textColor;
+	ctx.textAlign = 'center';
+	ctx.textBaseline = 'middle';
+
+	// Place text in the top padding area (top-center)
+	ctx.fillText(text, width / 2, padding / 2);
+
+	// 5. Trigger Download
+	const url = tempCanvas.toDataURL('image/png');
+	const link = document.createElement('a');
+	link.download = 'status_comparison_chart.png';
+	link.href = url;
+	document.body.appendChild(link); // Required for Firefox
+	link.click();
+	document.body.removeChild(link);
+}
+
+// --- Export Chart Function ---
+function openChartImage() {
+	if (!chartInstance) return;
+
+	// 1. Create a temporary canvas with exact same dimensions
+	const originalCanvas = chartInstance.canvas;
+	const originalWidth = originalCanvas.width;
+	const originalHeight = originalCanvas.height;
+
+	// Define padding size
+	const padding = 40;
+
+	const tempCanvas = document.createElement('canvas');
+	const width = originalWidth + (padding * 2);
+	const height = originalHeight + (padding * 2);
+
+	tempCanvas.width = width;
+	tempCanvas.height = height;
+	const ctx = tempCanvas.getContext('2d');
+
+	// 2. Fill Background based on current theme
+	const isDark = document.documentElement.classList.contains('dark');
+	const bgColor = isDark ? '#111827' : '#ffffff';
+	const textColor = isDark ? '#9ca3af' : '#6b7280';
+
+	ctx.fillStyle = bgColor;
+	ctx.fillRect(0, 0, width, height);
+
+	// 3. Draw Chart centered with padding
+	ctx.drawImage(originalCanvas, padding, padding);
+
+	// 4. Add Text (Watermark) - Top Center position
+	const text = `ER:NR ステータス変更遺物効果比較ツール（https://fromatom.me/NIGHTREIGN-Relic-Stat-Analyzer/）`;
+	const fontSize = Math.min(Math.max(12, Math.round(width * 0.015)), 24);
+	ctx.font = `${fontSize}px sans-serif`;
+	ctx.fillStyle = textColor;
+	ctx.textAlign = 'center';
+	ctx.textBaseline = 'middle';
+
+	// Place text in the top padding area (top-center)
+	ctx.fillText(text, width / 2, padding / 2);
+
+	// 5. Export and Open
+	const url = tempCanvas.toDataURL('image/png');
+
+	const newWindow = window.open();
+
+	if (newWindow) {
+		newWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>ステータス比較チャート - 画像</title>
+                            <style>
+                                body {
+                                    margin: 0;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    background-color: ${bgColor};
+                                    height: 100vh;
+                                    font-family: sans-serif;
+                                }
+                                img {
+                                    max-width: 95%;
+                                    max-height: 95%;
+                                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+                                    border-radius: 8px;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <img src="${url}" alt="Exported Chart">
+                        </body>
+                    </html>
+                `);
+			newWindow.document.close();
 		}
+	}
 
-		const group = document.createElement('div');
-		group.className = "bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-colors duration-300";
+	// --- Rendering ---
 
-		const header = document.createElement('div');
-		header.className = "p-3 bg-gray-50 dark:bg-gray-750 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex justify-between items-center transition-colors";
-		header.onclick = () => toggleAccordion(accordionId, charName);
+	function initControls() {
+		const panel = document.getElementById('controlPanel');
+		panel.innerHTML = '';
 
-		const titleDiv = document.createElement('div');
-		titleDiv.className = "flex items-center gap-2";
-		titleDiv.innerHTML = `<span class="w-3 h-3 rounded-full shadow" style="background-color: ${charObj.colorHex}"></span>
+		Object.keys(characters).forEach((charName, index) => {
+			const charObj = characters[charName];
+			const accordionId = `acc-${index}`;
+
+			if (accordionState[charName] === undefined) {
+				accordionState[charName] = true;
+			}
+
+			const group = document.createElement('div');
+			group.className = "bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-colors duration-300";
+
+			const header = document.createElement('div');
+			header.className = "p-3 bg-gray-50 dark:bg-gray-750 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex justify-between items-center transition-colors";
+			header.onclick = () => toggleAccordion(accordionId, charName);
+
+			const titleDiv = document.createElement('div');
+			titleDiv.className = "flex items-center gap-2";
+			titleDiv.innerHTML = `<span class="w-3 h-3 rounded-full shadow" style="background-color: ${charObj.colorHex}"></span>
                                       <span class="font-bold text-sm text-gray-700 dark:text-gray-200">${charName}</span>`;
 
-		const arrow = document.createElement('div');
-		arrow.id = accordionId + '-arrow';
-		arrow.className = `arrow-icon text-gray-400 dark:text-gray-500 ${!accordionState[charName] ? 'collapsed' : ''}`;
-		arrow.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>`;
+			const arrow = document.createElement('div');
+			arrow.id = accordionId + '-arrow';
+			arrow.className = `arrow-icon text-gray-400 dark:text-gray-500 ${!accordionState[charName] ? 'collapsed' : ''}`;
+			arrow.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>`;
 
-		header.appendChild(titleDiv);
-		header.appendChild(arrow);
-		group.appendChild(header);
+			header.appendChild(titleDiv);
+			header.appendChild(arrow);
+			group.appendChild(header);
 
-		const content = document.createElement('div');
-		content.id = accordionId;
-		content.className = `accordion-content bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 ${!accordionState[charName] ? 'collapsed' : ''}`;
+			const content = document.createElement('div');
+			content.id = accordionId;
+			content.className = `accordion-content bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 ${!accordionState[charName] ? 'collapsed' : ''}`;
 
-		const grid = document.createElement('div');
-		grid.className = "p-2 grid grid-cols-1 gap-1";
+			const grid = document.createElement('div');
+			grid.className = "p-2 grid grid-cols-1 gap-1";
 
-		charObj.variants.forEach((variant, idx) => {
-			const uniqueId = `${charName}-${idx}`;
+			charObj.variants.forEach((variant, idx) => {
+				const uniqueId = `${charName}-${idx}`;
 
-			if (selectedIndices[uniqueId] === undefined) {
-				selectedIndices[uniqueId] = (idx === 0);
-			}
+				if (selectedIndices[uniqueId] === undefined) {
+					selectedIndices[uniqueId] = (idx === 0);
+				}
 
-			const label = document.createElement('label');
-			label.className = "flex items-center space-x-2 cursor-pointer p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors";
+				const label = document.createElement('label');
+				label.className = "flex items-center space-x-2 cursor-pointer p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors";
 
-			const checkbox = document.createElement('input');
-			checkbox.type = "checkbox";
-			checkbox.className = "form-checkbox h-4 w-4 text-blue-500 rounded border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-600 focus:ring-blue-500";
-			checkbox.checked = selectedIndices[uniqueId];
+				const checkbox = document.createElement('input');
+				checkbox.type = "checkbox";
+				checkbox.className = "form-checkbox h-4 w-4 text-blue-500 rounded border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-600 focus:ring-blue-500";
+				checkbox.checked = selectedIndices[uniqueId];
 
-			checkbox.onchange = (e) => {
-				selectedIndices[uniqueId] = e.target.checked;
-				updateChartAndTable();
-			};
+				checkbox.onchange = (e) => {
+					selectedIndices[uniqueId] = e.target.checked;
+					updateChartAndTable();
+				};
 
-			const span = document.createElement('span');
-			span.className = "text-xs text-gray-700 dark:text-gray-300 select-none flex items-center gap-2 truncate";
+				const span = document.createElement('span');
+				span.className = "text-xs text-gray-700 dark:text-gray-300 select-none flex items-center gap-2 truncate";
 
-			let patternIcon = '';
-			if (idx === 0) patternIcon = 'bg-current';
-			else if (idx === 1) patternIcon = 'bg-[url(\'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxwYXRoIGQ9Ik0wIDRMOCA0IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=\')]'; // Horizontal Line SVG
-			else if (idx === 2) patternIcon = 'bg-[url(\'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxjaXJjbGUgY3g9IjIiIGN5PSIyIiByPSIxIiBmaWxsPSJ3aGl0ZSIvPjxjaXJjbGUgY3g9IjYiIGN5PSI2IiByPSIxIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==\')]';
-			else patternIcon = 'bg-[url(\'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxwYXRoIGQ9Ik0wIDBMOCA4TTggMEwwIDgiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMSIvPjwvc3ZnPg==\')]';
+				let patternIcon = '';
+				if (idx === 0) patternIcon = 'bg-current';
+				else if (idx === 1) patternIcon = 'bg-[url(\'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxwYXRoIGQ9Ik0wIDRMOCA0IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=\')]'; // Horizontal Line SVG
+				else if (idx === 2) patternIcon = 'bg-[url(\'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxjaXJjbGUgY3g9IjIiIGN5PSIyIiByPSIxIiBmaWxsPSJ3aGl0ZSIvPjxjaXJjbGUgY3g9IjYiIGN5PSI2IiByPSIxIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==\')]';
+				else patternIcon = 'bg-[url(\'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxwYXRoIGQ9Ik0wIDBMOCA4TTggMEwwIDgiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMSIvPjwvc3ZnPg==\')]';
 
-			const iconColor = charObj.colorHex;
+				const iconColor = charObj.colorHex;
 
-			span.innerHTML = `<span class="w-4 h-4 inline-block border border-gray-300 dark:border-gray-500 rounded-sm flex-shrink-0 ${patternIcon} bg-center bg-repeat" style="background-color: ${iconColor}; background-size: ${idx===0?'auto':'6px 6px'};"></span>${variant.name}`;
+				span.innerHTML = `<span class="w-4 h-4 inline-block border border-gray-300 dark:border-gray-500 rounded-sm flex-shrink-0 ${patternIcon} bg-center bg-repeat" style="background-color: ${iconColor}; background-size: ${idx===0?'auto':'6px 6px'};"></span>${variant.name}`;
 
-			label.appendChild(checkbox);
-			label.appendChild(span);
-			grid.appendChild(label);
+				label.appendChild(checkbox);
+				label.appendChild(span);
+				grid.appendChild(label);
+			});
+
+			content.appendChild(grid);
+			group.appendChild(content);
+			panel.appendChild(group);
 		});
-
-		content.appendChild(grid);
-		group.appendChild(content);
-		panel.appendChild(group);
-	});
-}
-
-function updateTable() {
-	const theadRow = document.getElementById('tableHeaderRow');
-	const tbody = document.getElementById('dataTableBody');
-
-	theadRow.innerHTML = '';
-	tbody.innerHTML = '';
-
-	const isDark = document.documentElement.classList.contains('dark');
-	const headerBg = isDark ? 'bg-gray-700' : 'bg-gray-200';
-	const cellBorder = isDark ? 'border-gray-700' : 'border-gray-200';
-	const fixedBorderColor = isDark ? 'dark:border-gray-600' : 'border-gray-300';
-	const fixedCellShadow = 'shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]';
-
-	let th = document.createElement('th');
-	th.scope = "col";
-	th.className = `px-4 py-3 sticky left-0 z-20 min-w-[80px] border-b border-r ${fixedBorderColor} ${headerBg} ${fixedCellShadow}`;
-	th.innerText = "項目";
-	theadRow.appendChild(th);
-
-	const activeDatasets = getActiveDatasets();
-
-	if (activeDatasets.length === 0) {
-		tbody.innerHTML = `<tr><td colspan="100%" class="p-4 text-center text-gray-500 border-b ${cellBorder}">データが選択されていません</td></tr>`;
-		return;
 	}
 
-	activeDatasets.forEach((ds, i) => {
-		const th = document.createElement('th');
-		th.scope = "col";
-		th.className = `px-4 py-3 min-w-[120px] border-b ${fixedBorderColor}`;
-		th.style.color = ds.borderColor;
-		th.innerText = ds.label;
-		theadRow.appendChild(th);
-	});
+	function updateTable() {
+		const theadRow = document.getElementById('tableHeaderRow');
+		const tbody = document.getElementById('dataTableBody');
 
-	labels.forEach((label, rowIndex) => {
-		const tr = document.createElement('tr');
-		const baseBg = rowIndex % 2 === 0
-		? 'bg-white dark:bg-gray-800'
-		: 'bg-gray-50 dark:bg-gray-750';
-		const hoverBg = 'hover:bg-gray-100 dark:hover:bg-gray-700';
+		theadRow.innerHTML = '';
+		tbody.innerHTML = '';
 
-		tr.className = `${baseBg} ${hoverBg} group transition-colors`;
+		const isDark = document.documentElement.classList.contains('dark');
+		const headerBg = isDark ? 'bg-gray-700' : 'bg-gray-200';
+		const cellBorder = isDark ? 'border-gray-700' : 'border-gray-200';
+		const fixedBorderColor = isDark ? 'dark:border-gray-600' : 'border-gray-300';
+		const fixedCellShadow = 'shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]';
 
 		let th = document.createElement('th');
-		th.scope = "row";
-		th.className = `px-4 py-3 font-medium text-gray-800 dark:text-white sticky left-0 z-10 border-b border-r ${fixedBorderColor} ${fixedCellShadow} ${baseBg} group-hover:bg-gray-100 dark:group-hover:bg-gray-700 transition-colors`;
-		th.innerText = label;
-		tr.appendChild(th);
+		th.scope = "col";
+		th.className = `px-4 py-3 sticky left-0 z-20 min-w-[80px] border-b border-r ${fixedBorderColor} ${headerBg} ${fixedCellShadow}`;
+		th.innerText = "項目";
+		theadRow.appendChild(th);
 
-		activeDatasets.forEach(ds => {
-			const val = ds.data[rowIndex];
-			const td = document.createElement('td');
-			td.className = `px-4 py-3 text-center border-b ${cellBorder}`;
-			td.innerText = val;
-			tr.appendChild(td);
+		const activeDatasets = getActiveDatasets();
+
+		if (activeDatasets.length === 0) {
+			tbody.innerHTML = `<tr><td colspan="100%" class="p-4 text-center text-gray-500 border-b ${cellBorder}">データが選択されていません</td></tr>`;
+			return;
+		}
+
+		activeDatasets.forEach((ds, i) => {
+			const th = document.createElement('th');
+			th.scope = "col";
+			th.className = `px-4 py-3 min-w-[120px] border-b ${fixedBorderColor}`;
+			th.style.color = ds.borderColor;
+			th.innerText = ds.label;
+			theadRow.appendChild(th);
 		});
 
-		tbody.appendChild(tr);
-	});
-}
+		labels.forEach((label, rowIndex) => {
+			const tr = document.createElement('tr');
+			const baseBg = rowIndex % 2 === 0
+			? 'bg-white dark:bg-gray-800'
+			: 'bg-gray-50 dark:bg-gray-750';
+			const hoverBg = 'hover:bg-gray-100 dark:hover:bg-gray-700';
 
-function updateChart() {
-	const ctx = document.getElementById('statusChart').getContext('2d');
-	const datasets = getActiveDatasets();
-	const isDark = document.documentElement.classList.contains('dark');
+			tr.className = `${baseBg} ${hoverBg} group transition-colors`;
 
-	const tickColor = isDark ? '#e5e7eb' : '#374151';
-	const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+			let th = document.createElement('th');
+			th.scope = "row";
+			th.className = `px-4 py-3 font-medium text-gray-800 dark:text-white sticky left-0 z-10 border-b border-r ${fixedBorderColor} ${fixedCellShadow} ${baseBg} group-hover:bg-gray-100 dark:group-hover:bg-gray-700 transition-colors`;
+			th.innerText = label;
+			tr.appendChild(th);
 
-	if (chartInstance) {
-		chartInstance.data.datasets = datasets;
-		chartInstance.options.scales.x.ticks.color = tickColor;
-		chartInstance.options.scales.x.grid.color = gridColor;
-		chartInstance.options.scales.y.ticks.color = tickColor;
+			activeDatasets.forEach(ds => {
+				const val = ds.data[rowIndex];
+				const td = document.createElement('td');
+				td.className = `px-4 py-3 text-center border-b ${cellBorder}`;
+				td.innerText = val;
+				tr.appendChild(td);
+			});
 
-		chartInstance.data.datasets.forEach(ds => {
-			ds.datalabels.color = isDark ? '#fff' : '#1f2937';
-		});
-
-		chartInstance.update();
-	} else {
-		chartInstance = new Chart(ctx, {
-			type: 'bar',
-			data: {
-				labels: labels,
-				datasets: datasets
-			},
-			plugins: [ChartDataLabels],
-			options: {
-				indexAxis: 'y',
-				responsive: true,
-				maintainAspectRatio: false,
-				layout: {
-					padding: { right: 50 }
-				},
-				scales: {
-					x: {
-						beginAtZero: true,
-						grid: { color: gridColor },
-						ticks: { color: tickColor }
-					},
-					y: {
-						grid: { display: false },
-						ticks: {
-							color: tickColor,
-							font: { size: 14, weight: 'bold' }
-						}
-					}
-				},
-				plugins: {
-					legend: {
-						display: true,
-						position: 'bottom',
-						align: 'start',
-						labels: {
-							color: tickColor,
-							font: { size: 12 },
-							boxWidth: 12,
-							padding: 15
-						},
-						onClick: null
-					},
-					tooltip: {
-						enabled: false
-					}
-				},
-				interaction: {
-					mode: 'nearest',
-					axis: 'y',
-					intersect: false
-				}
-			}
+			tbody.appendChild(tr);
 		});
 	}
-}
 
-function updateChartAndTable() {
-	updateChart();
-	updateTable();
-}
+	function updateChart() {
+		const ctx = document.getElementById('statusChart').getContext('2d');
+		const datasets = getActiveDatasets();
+		const isDark = document.documentElement.classList.contains('dark');
 
-function updateAll() {
-	initControls();
-	updateChartAndTable();
-}
+		const tickColor = isDark ? '#e5e7eb' : '#374151';
+		const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
 
-// Init
-document.addEventListener('DOMContentLoaded', () => {
-	updateAll();
-});
+		if (chartInstance) {
+			chartInstance.data.datasets = datasets;
+			chartInstance.options.scales.x.ticks.color = tickColor;
+			chartInstance.options.scales.x.grid.color = gridColor;
+			chartInstance.options.scales.y.ticks.color = tickColor;
+
+			chartInstance.data.datasets.forEach(ds => {
+				ds.datalabels.color = isDark ? '#fff' : '#1f2937';
+			});
+
+			chartInstance.update();
+		} else {
+			chartInstance = new Chart(ctx, {
+				type: 'bar',
+				data: {
+					labels: labels,
+					datasets: datasets
+				},
+				plugins: [ChartDataLabels],
+				options: {
+					indexAxis: 'y',
+					responsive: true,
+					maintainAspectRatio: false,
+					layout: {
+						padding: { right: 50 }
+					},
+					scales: {
+						x: {
+							beginAtZero: true,
+							grid: { color: gridColor },
+							ticks: { color: tickColor }
+						},
+						y: {
+							grid: { display: false },
+							ticks: {
+								color: tickColor,
+								font: { size: 14, weight: 'bold' }
+							}
+						}
+					},
+					plugins: {
+						legend: {
+							display: true,
+							position: 'bottom',
+							align: 'start',
+							labels: {
+								color: tickColor,
+								font: { size: 12 },
+								boxWidth: 12,
+								padding: 15
+							},
+							onClick: null
+						},
+						tooltip: {
+							enabled: false
+						}
+					},
+					interaction: {
+						mode: 'nearest',
+						axis: 'y',
+						intersect: false
+					}
+				}
+			});
+		}
+	}
+
+	function updateChartAndTable() {
+		updateChart();
+		updateTable();
+	}
+
+	function updateAll() {
+		initControls();
+		updateChartAndTable();
+	}
+
+	// Init
+	document.addEventListener('DOMContentLoaded', () => {
+		updateAll();
+	});
