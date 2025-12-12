@@ -319,7 +319,7 @@ function downloadChartImage() {
 		// 一時的なリンク要素を作成
 		const link = document.createElement('a');
 		link.href = url;
-		link.download = 'status_comparison_chart.png';
+		link.download = 'nr_relic_stat_chart.png';
 
 		// DOMに追加（Firefoxなどで必須）
 		document.body.appendChild(link);
