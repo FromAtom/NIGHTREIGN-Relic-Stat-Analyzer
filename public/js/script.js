@@ -378,10 +378,6 @@ function initControls() {
 		charObj.variants.forEach((variant, idx) => {
 			const uniqueId = `${charName}-${idx}`;
 
-			if (selectedIndices[uniqueId] === undefined) {
-				selectedIndices[uniqueId] = (idx === 0);
-			}
-
 			const label = document.createElement('label');
 			label.className = "flex items-center space-x-2 cursor-pointer p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors";
 
