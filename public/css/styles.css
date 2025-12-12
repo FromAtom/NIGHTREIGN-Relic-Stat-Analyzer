@@ -1,7 +1,7 @@
 /*
- * Custom CSS for layout consistency and animation.
- * Tailwind CSS is loaded via CDN in index.html.
- */
+* Custom CSS for layout consistency and animation.
+* Tailwind CSS is loaded via CDN in index.html.
+*/
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -60,4 +60,12 @@ html.dark .custom-scroll::-webkit-scrollbar-thumb:hover {
 }
 .arrow-icon.collapsed {
     transform: rotate(-90deg);
+}
+
+/* Mobile: Increase chart height for better visibility on small screens */
+@media (max-width: 1024px) {
+    .chart-container {
+        height: 80vh;
+        min-height: 55vh;
+    }
 }
