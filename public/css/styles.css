@@ -46,7 +46,7 @@ html.dark .custom-scroll::-webkit-scrollbar-thumb:hover {
 
 /* Accordion Animation */
 .accordion-content {
-    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    transition: max-height 0.2s ease-out, opacity 0.2s ease-out;
     max-height: 1000px; /* Sufficient height */
     opacity: 1;
     overflow: hidden;
@@ -56,7 +56,7 @@ html.dark .custom-scroll::-webkit-scrollbar-thumb:hover {
     opacity: 0;
 }
 .arrow-icon {
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
 }
 .arrow-icon.collapsed {
     transform: rotate(-90deg);
