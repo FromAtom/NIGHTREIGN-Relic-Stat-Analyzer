@@ -495,6 +495,8 @@ function updateChart() {
 			ds.datalabels.color = isDark ? '#fff' : '#1f2937';
 		});
 
+		chartInstance.options.plugins.legend.labels.color = tickColor;
+
 		chartInstance.update();
 	} else {
 		chartInstance = new Chart(ctx, {
