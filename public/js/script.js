@@ -296,7 +296,7 @@ function downloadChartImage() {
 	ctx.drawImage(originalCanvas, padding, padding);
 
 	// 4. Add Text (Watermark) - Top Center position
-	const text = 'ER:NR ステータス変更遺物効果比較ツール - https://fromatom.me/NIGHTREIGN-Relic-Stat-Analyzer/';
+	const text = 'ナイトレイン ステータス変更遺物効果比較ツール - https://fromatom.me/NIGHTREIGN-Relic-Stat-Analyzer/';
 	const fontSize = Math.min(Math.max(12, Math.round(width * 0.015)), 24);
 	ctx.font = `${fontSize}px sans-serif`;
 	ctx.fillStyle = textColor;

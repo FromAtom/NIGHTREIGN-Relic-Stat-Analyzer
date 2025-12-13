@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ER:NR ステータス変更遺物効果比較ツール</title>
+    <meta property="og:title" content="ナイトレイン ステータス変更遺物効果比較ツール" />
+    <meta property="og:description" content="エルデンリング ナイトレインのステータス変化をグラフで可視化。ステータス変更遺物を装備した際の能力値の変化を、一目でわかりやすく確認できるツールです。" />
+    <meta property="og:site_name" content="ナイトレイン ステータス変更遺物効果比較ツール" />
+    <meta property="og:image" content="public/image/og_image.png" />
+    <title>ナイトレイン ステータス変更遺物効果比較ツール</title>
     <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -40,10 +44,10 @@
                 <!-- 1行目: タイトルとボタンを左右両端に配置 -->
                 <div class="flex items-center justify-between w-full">
                     <h1 class="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">
-                        ER:NR<span class="hidden md:inline">｜</span><br class="md:hidden" />ステータス変更遺物効果比較ツール
+                        ナイトレイン <br class="md:hidden" />ステータス変更遺物<br class="md:hidden" />効果比較ツール
                     </h1>
 
-                    <!-- 統合されたテーマ切り替えボタン (常に表示) -->
+                    <!-- テーマ切り替えボタン-->
                     <button id="themeToggleButton" onclick="toggleTheme()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-yellow-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center shadow-sm" aria-label="テーマ切り替え">
                         <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                         <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 block dark:hidden text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
@@ -51,13 +55,13 @@
                 </div>
 
                 <!-- 2行目: 説明リスト -->
-                <ul class="text-gray-500 dark:text-gray-400 text-s mt-2 pl-4 pt-5 list-disc list-inside border-gray-300 dark:border-gray-600">
+                <ul class="text-gray-500 dark:text-gray-400 text-xs mt-2 pl-4 pt-5 list-disc list-inside border-gray-300 dark:border-gray-600">
                     <li>本ツールは非公式です。</li>
                     <li>本ツールは『<u><a href="https://kamikouryaku.net/nightreign_eldenring/">神攻略wiki</a></u>』様に掲載されているデータを出典として、許可を得た上で一部利用しています。</li>
 					<li>本ツールは『神攻略wiki』様とは無関係です。ツールに関する連絡（要望・問い合わせ・バグ報告など）は、神攻略wiki様へは絶対に行わないでください。</li>
                     <li>本ツールに関する連絡（要望・問い合わせ・バグ報告など）は<u><a href="https://github.com/FromAtom/NIGHTREIGN-Relic-Stat-Analyzer">GitHub</a></u>からご連絡ください。</li>
-					<li>本ツールの利用によって直接的または間接的に生じたいかなる損害、不利益、トラブル等に関しまして、ツール開発者は一切の責任を負いません。</li>
-                    <li>本ツールのスクショやDLしたグラフ画像は、SNS・動画等で自由にご利用ください。URLを添えてもらえると制作者が喜びます。</li>
+					<li>本ツールの利用によって直接的または間接的に生じたいかなる損害、不利益、トラブル等に関して、本ツール開発者は一切の責任を負いません。</li>
+                    <li>本ツールのスクショやDLしたグラフ画像は、SNS・動画等で自由にご利用ください。リンクを添えてもらえると制作者が喜びます。</li>
                 </ul>
             </div>
         </div>
